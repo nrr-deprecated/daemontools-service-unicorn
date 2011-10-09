@@ -1,0 +1,18 @@
+#!/bin/bash
+
+exec 2>&1 \
+envdir ./user_env \
+envdir ./env \
+sh -c '
+	source /usr/local/rvm/scripts/rvm	
+	rvm use $RUBY
+
+	cd $DOMAINS_DIR/$DOMAIN/$HOST/releases/current
+
+	# MAX_HEAP can be determined by `python -c "print $MAX_HEAP_IN_MEGABYTES * 2**20"`
+	SOFTLIMIT=${MAX_HEAP+"softlimit -m $MAX_HEAP"}
+	
+	exec setuidgid $USER \
+	$SOFTLIMIT \
+	bundle exec unicorn_rails -c ./root/unicorn.rb -E $RAILS_ENV
+'

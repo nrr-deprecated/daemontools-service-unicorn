@@ -1,0 +1,14 @@
+#!/bin/sh
+
+exec \
+envdir ./env \
+sh -c '
+    exec \
+    setuidgid ${USER+"$USER"} \
+    multilog \
+        t \
+        ${MAXFILESIZE+"s$MAXFILESIZE"} \
+        ${MAXLOGFILES+"n$MAXLOGFILES"} \
+        ${PROCESSOR+"!$PROCESSOR"} \
+        ./main
+'
